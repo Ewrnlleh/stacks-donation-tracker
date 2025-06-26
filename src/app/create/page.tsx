@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import { useWallet } from '@/context/WalletContext';
@@ -8,6 +8,7 @@ import { ArrowLeft, Calendar, Target, FileText, Clock } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CreateCampaignPage() {
+  const [mounted, setMounted] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -19,6 +20,10 @@ export default function CreateCampaignPage() {
 
   const { isConnected, createCampaign, loading } = useWallet();
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -69,6 +74,18 @@ export default function CreateCampaignPage() {
       setIsSubmitting(false);
     }
   };
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading Create Campaign...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isConnected) {
     return (

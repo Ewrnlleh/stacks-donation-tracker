@@ -14,6 +14,7 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<'all' | 'active' | 'ended'>('all');
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const [stats, setStats] = useState({
     totalCampaigns: 0,
     totalDonations: 0,
@@ -24,13 +25,21 @@ export default function HomePage() {
   const { isConnected } = useWallet();
 
   useEffect(() => {
-    loadCampaigns();
-    loadStats();
+    setMounted(true);
   }, []);
 
   useEffect(() => {
-    filterCampaigns();
-  }, [campaigns, searchTerm, filter]);
+    if (mounted) {
+      loadCampaigns();
+      loadStats();
+    }
+  }, [mounted]);
+
+  useEffect(() => {
+    if (mounted) {
+      filterCampaigns();
+    }
+  }, [campaigns, searchTerm, filter, mounted]);
 
   const loadCampaigns = async () => {
     try {
@@ -90,6 +99,18 @@ export default function HomePage() {
       activeCampaigns,
     }));
   };
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading DeFi Donation Tracker...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

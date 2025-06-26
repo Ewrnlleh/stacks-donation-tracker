@@ -56,8 +56,15 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    
     if (userSession.isSignInPending()) {
       userSession.handlePendingSignIn().then((userData) => {
         setUserData(userData);
@@ -67,7 +74,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       setUserData(userSession.loadUserData());
       setIsConnected(true);
     }
-  }, [userSession]);
+  }, [userSession, mounted]);
 
   const connect = () => {
     showConnect({
@@ -202,7 +209,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const value: WalletContextType = {
     userSession,
     userData,
-    isConnected,
+    isConnected: mounted ? isConnected : false,
     connect,
     disconnect,
     createCampaign,
@@ -211,6 +218,26 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     loading,
     error,
   };
+
+  // Prevent hydration issues by not rendering until mounted
+  if (!mounted) {
+    return (
+      <WalletContext.Provider value={{
+        userSession,
+        userData: null,
+        isConnected: false,
+        connect,
+        disconnect,
+        createCampaign,
+        makeDonation,
+        withdrawFunds,
+        loading: false,
+        error: null,
+      }}>
+        {children}
+      </WalletContext.Provider>
+    );
+  }
 
   return (
     <WalletContext.Provider value={value}>

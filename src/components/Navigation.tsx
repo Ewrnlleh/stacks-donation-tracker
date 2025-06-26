@@ -1,12 +1,17 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useWallet } from '@/context/WalletContext';
 import { Wallet, Heart, TrendingUp, Users, LogOut } from 'lucide-react';
 
 const Navigation: React.FC = () => {
+  const [mounted, setMounted] = useState(false);
   const { isConnected, connect, disconnect, userData } = useWallet();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <nav className="bg-white shadow-lg border-b border-gray-200">
@@ -30,7 +35,7 @@ const Navigation: React.FC = () => {
                 <span>Campaigns</span>
               </Link>
               
-              {isConnected && (
+              {mounted && isConnected && (
                 <>
                   <Link
                     href="/create"
@@ -52,7 +57,7 @@ const Navigation: React.FC = () => {
 
           {/* Wallet connection */}
           <div className="flex items-center space-x-4">
-            {isConnected ? (
+            {mounted && isConnected ? (
               <div className="flex items-center space-x-4">
                 <div className="hidden sm:flex items-center space-x-2 bg-gray-100 px-3 py-2 rounded-lg">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -68,7 +73,7 @@ const Navigation: React.FC = () => {
                   <span className="hidden sm:inline">Disconnect</span>
                 </button>
               </div>
-            ) : (
+            ) : mounted ? (
               <button
                 onClick={connect}
                 className="flex items-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors duration-200"
@@ -76,6 +81,11 @@ const Navigation: React.FC = () => {
                 <Wallet className="h-4 w-4" />
                 <span>Connect Wallet</span>
               </button>
+            ) : (
+              <div className="flex items-center space-x-2 bg-gray-300 text-gray-500 px-6 py-2 rounded-lg">
+                <Wallet className="h-4 w-4" />
+                <span>Loading...</span>
+              </div>
             )}
           </div>
         </div>
@@ -90,7 +100,7 @@ const Navigation: React.FC = () => {
               Campaigns
             </Link>
             
-            {isConnected && (
+            {mounted && isConnected && (
               <>
                 <Link
                   href="/create"

@@ -5,11 +5,15 @@ import {
   uintCV,
   fetchCallReadOnlyFunction,
 } from '@stacks/transactions';
+import { mockCampaigns } from '@/data/mockData';
 
 const network = STACKS_TESTNET;
 const CONTRACT_ADDRESS = 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM'; // Replace with deployed contract address
 const DONATION_CONTRACT_NAME = 'donation-tracker';
 const REWARDS_CONTRACT_NAME = 'donation-rewards';
+
+// Flag to use mock data when contracts aren't deployed
+const USE_MOCK_DATA = true;
 
 export interface Campaign {
   id: number;
@@ -45,6 +49,10 @@ export interface CampaignStats {
 class ContractService {
   // Campaign-related functions
   async getCampaign(campaignId: number): Promise<Campaign | null> {
+    if (USE_MOCK_DATA) {
+      return mockCampaigns.find(c => c.id === campaignId) || null;
+    }
+
     try {
       const result = await fetchCallReadOnlyFunction({
         contractAddress: CONTRACT_ADDRESS,
@@ -79,6 +87,10 @@ class ContractService {
   }
 
   async getTotalCampaigns(): Promise<number> {
+    if (USE_MOCK_DATA) {
+      return mockCampaigns.length;
+    }
+
     try {
       const result = await fetchCallReadOnlyFunction({
         contractAddress: CONTRACT_ADDRESS,
@@ -98,6 +110,14 @@ class ContractService {
   }
 
   async getTotalDonations(): Promise<number> {
+    if (USE_MOCK_DATA) {
+      // Calculate total donations from mock data
+      return mockCampaigns.reduce((total, campaign) => {
+        // Estimate number of donations based on current amount (assuming average 5 STX per donation)
+        return total + Math.ceil(campaign.currentAmount / 5);
+      }, 0);
+    }
+
     try {
       const result = await fetchCallReadOnlyFunction({
         contractAddress: CONTRACT_ADDRESS,
@@ -117,6 +137,10 @@ class ContractService {
   }
 
   async getAllCampaigns(): Promise<Campaign[]> {
+    if (USE_MOCK_DATA) {
+      return [...mockCampaigns];
+    }
+
     const totalCampaigns = await this.getTotalCampaigns();
     const campaigns: Campaign[] = [];
 
