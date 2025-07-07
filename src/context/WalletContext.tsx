@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { AppConfig, UserSession, showConnect, openContractCall } from '@stacks/connect';
-import { STACKS_TESTNET } from '@stacks/network';
+import { STACKS_TESTNET, STACKS_MAINNET } from '@stacks/network';
 import { 
   PostConditionMode, 
   makeContractCall,
@@ -15,13 +15,18 @@ import { principalCV, uintCV, stringAsciiCV, someCV, noneCV } from '@stacks/tran
 // App configuration
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 
-// Network configuration
-const network = STACKS_TESTNET; // Switch to STACKS_MAINNET for production
+// Network configuration using environment variables
+const getNetwork = () => {
+  const networkType = process.env.NEXT_PUBLIC_STACKS_NETWORK || 'testnet';
+  return networkType === 'mainnet' ? STACKS_MAINNET : STACKS_TESTNET;
+};
 
-// Contract details
-const CONTRACT_ADDRESS = 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM'; // Replace with deployed contract address
-const DONATION_CONTRACT_NAME = 'donation-tracker';
-const REWARDS_CONTRACT_NAME = 'donation-rewards';
+const network = getNetwork();
+
+// Contract details from environment variables
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_DEPLOYER_TESTNET_ADDRESS || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
+const DONATION_CONTRACT_NAME = process.env.NEXT_PUBLIC_DONATION_CONTRACT_NAME || 'donation-tracker';
+const REWARDS_CONTRACT_NAME = process.env.NEXT_PUBLIC_REWARDS_CONTRACT_NAME || 'donation-rewards';
 
 interface WalletContextType {
   userSession: UserSession;
