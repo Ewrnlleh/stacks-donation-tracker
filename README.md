@@ -4,12 +4,44 @@
 ![Stacks](https://img.shields.io/badge/Stacks-Blockchain-orange.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)
+![Hiro](https://img.shields.io/badge/Hiro-Platform-red.svg)
 
-A decentralized application (dApp) for transparent charity donations built on the Stacks blockchain. Every donation is tracked on-chain, providing complete transparency and accountability for donors and campaign creators.
+A decentralized application (dApp) for transparent charity donations built on the Stacks blockchain using Hiro Platform. Every donation is tracked on-chain, providing complete transparency and accountability for donors and campaign creators.
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+ 
+- Hiro Wallet browser extension
+- Hiro Platform account (for API access)
+
+### Installation
+```bash
+git clone https://github.com/yourusername/stacks-donation-tracker-1.git
+cd stacks-donation-tracker-1
+npm install
+```
+
+### Environment Setup
+```bash
+# Copy environment template
+cp .env.example .env.local
+
+# Add your Hiro API key to .env.local
+NEXT_PUBLIC_PLATFORM_HIRO_API_KEY=your_api_key_here
+```
+
+### Run Development Server
+```bash
+npm run dev
+```
+
+Visit `http://localhost:3000` to see the application.
 
 ## 🌟 Features
 
 ### ✨ Core Functionality
+- **Hiro Platform Integration**: Built with official Hiro tools and APIs
 - **Transparent Donations**: All donations are recorded immutably on the Stacks blockchain
 - **Campaign Management**: Create and manage donation campaigns with customizable goals and durations
 - **Real-time Tracking**: Monitor donation progress and campaign statistics in real-time
