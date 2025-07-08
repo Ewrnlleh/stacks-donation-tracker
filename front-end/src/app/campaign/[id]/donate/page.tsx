@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { contractService, Campaign } from '@/services/contractService';
-import { ArrowLeft, Heart, AlertCircle } from 'lucide-react';
+import { useWallet } from '@/context/WalletContext';
+import { DonationModal } from '@/components/DonationModal';
+import { ArrowLeft, Heart, AlertCircle, Wallet, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DonatePage() {
@@ -12,6 +14,10 @@ export default function DonatePage() {
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDonationModal, setShowDonationModal] = useState(false);
+  const [donationSuccess, setDonationSuccess] = useState(false);
+  
+  const { isConnected, connect, donateToCampaign, userData } = useWallet();
   
   const campaignId = parseInt(params.id as string, 10);
 
@@ -36,31 +42,6 @@ export default function DonatePage() {
   }
 
   useEffect(() => {
-    // Simple immediate fetch without complex mounting logic
-    const fetchCampaign = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        // Add a small delay to ensure proper rendering
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-        const campaignData = await contractService.getCampaign(campaignId);
-        
-        if (!campaignData) {
-          setError('Campaign not found');
-          return;
-        }
-        
-        setCampaign(campaignData);
-      } catch (err) {
-        console.error('Error fetching campaign:', err);
-        setError('Failed to load campaign details');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCampaign();
   }, [campaignId]);
 
@@ -69,6 +50,42 @@ export default function DonatePage() {
       minimumFractionDigits: 2,
       maximumFractionDigits: 6,
     }).format(amount);
+  };
+
+  const handleDonate = async (amount: number, message?: string) => {
+    try {
+      await donateToCampaign(campaignId, amount, message);
+      setDonationSuccess(true);
+      // Refresh campaign data
+      await fetchCampaign();
+    } catch (error) {
+      console.error('Donation failed:', error);
+      throw error;
+    }
+  };
+
+  const fetchCampaign = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Add a small delay to ensure proper rendering
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      const campaignData = await contractService.getCampaign(campaignId);
+      
+      if (!campaignData) {
+        setError('Campaign not found');
+        return;
+      }
+      
+      setCampaign(campaignData);
+    } catch (err) {
+      console.error('Error fetching campaign:', err);
+      setError('Failed to load campaign details');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const progressPercentage = campaign 
@@ -189,36 +206,93 @@ export default function DonatePage() {
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Make a Donation</h2>
             
-            <div className="text-center py-8">
-              <Heart className="w-12 h-12 text-orange-500 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Wallet Connection Required
-              </h3>
-              <p className="text-gray-600 mb-4">
-                To make a donation to this campaign, you'll need to connect your Stacks wallet.
-              </p>
-              <p className="text-sm text-gray-500 mb-6">
-                This ensures secure, transparent donations recorded on the Stacks blockchain.
-              </p>
-              
-              <div className="space-y-3">
-                <Link 
-                  href={`/campaign/${campaignId}`}
-                  className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
-                >
-                  <span>View Campaign Details</span>
-                </Link>
+            {donationSuccess && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <h3 className="text-green-800 font-medium mb-2">Donation Successful!</h3>
+                <p className="text-green-700 text-sm">
+                  Thank you for your contribution! Your donation has been recorded on the blockchain.
+                </p>
+              </div>
+            )}
+            
+            {!isConnected ? (
+              <div className="text-center py-8">
+                <Wallet className="w-12 h-12 text-orange-500 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Connect Your Wallet
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  To make a donation to this campaign, you'll need to connect your Stacks wallet.
+                </p>
+                <p className="text-sm text-gray-500 mb-6">
+                  This ensures secure, transparent donations recorded on the Stacks blockchain.
+                </p>
                 
-                <div className="text-center">
+                <button 
+                  onClick={connect}
+                  className="inline-flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
+                >
+                  <Wallet className="w-5 h-5" />
+                  <span>Connect Wallet</span>
+                </button>
+                
+                <div className="mt-4 space-y-3">
+                  <Link 
+                    href={`/campaign/${campaignId}`}
+                    className="block text-blue-600 hover:text-blue-800 text-sm"
+                  >
+                    View Campaign Details
+                  </Link>
+                  
                   <Link 
                     href="/"
-                    className="text-gray-600 hover:text-gray-800 text-sm"
+                    className="block text-gray-600 hover:text-gray-800 text-sm"
                   >
                     ← Back to All Campaigns
                   </Link>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="text-center py-8">
+                <Heart className="w-12 h-12 text-red-500 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Ready to Donate
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  You're connected as: <span className="font-medium">{userData?.profile?.stxAddress?.testnet || 'Connected User'}</span>
+                </p>
+                
+                {campaign?.isActive ? (
+                  <button 
+                    onClick={() => setShowDonationModal(true)}
+                    className="inline-flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
+                  >
+                    <Heart className="w-5 h-5" />
+                    <span>Donate Now</span>
+                  </button>
+                ) : (
+                  <div className="bg-gray-100 rounded-lg p-4">
+                    <p className="text-gray-600 text-sm">This campaign has ended and is no longer accepting donations.</p>
+                  </div>
+                )}
+                
+                <div className="mt-4 space-y-3">
+                  <Link 
+                    href={`/campaign/${campaignId}`}
+                    className="block text-blue-600 hover:text-blue-800 text-sm"
+                  >
+                    View Campaign Details
+                  </Link>
+                  
+                  <Link 
+                    href="/"
+                    className="block text-gray-600 hover:text-gray-800 text-sm"
+                  >
+                    ← Back to All Campaigns
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Info Box */}
@@ -233,6 +307,17 @@ export default function DonatePage() {
           </div>
         </div>
       </div>
+      
+      {/* Donation Modal */}
+      {campaign && (
+        <DonationModal
+          isOpen={showDonationModal}
+          onClose={() => setShowDonationModal(false)}
+          campaignId={campaignId}
+          campaignTitle={campaign.title}
+          onDonate={handleDonate}
+        />
+      )}
     </div>
   );
 }
