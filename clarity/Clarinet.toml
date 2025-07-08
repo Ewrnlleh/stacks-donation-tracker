@@ -12,13 +12,13 @@ mainnet = "https://stacks-node-api.mainnet.stacks.co"
 [[project.requirements]]
 contract_id = "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard"
 
-[contracts.donation-tracker]
-path = "clarity/contracts/donation-tracker.clar"
+[contracts.donation-tracker-v2]
+path = "contracts/donation-tracker.clar"
 depends_on = []
 
-[contracts.donation-rewards]
-path = "clarity/contracts/donation-rewards.clar"
-depends_on = ["donation-tracker"]
+[contracts.donation-rewards-v2]
+path = "contracts/donation-rewards.clar"
+depends_on = ["donation-tracker-v2"]
 
 [repl.analysis]
 passes = ["check_checker"]

@@ -62,7 +62,9 @@ const Navigation: React.FC = () => {
                 <div className="hidden sm:flex items-center space-x-2 bg-gray-100 px-3 py-2 rounded-lg">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span className="text-sm text-gray-700 font-medium">
-                    {userData?.profile?.stxAddress?.testnet?.slice(0, 8)}...
+                    {userData?.profile?.stxAddress?.testnet?.slice(0, 8) || 
+                     userData?.identityAddress?.slice(0, 8) ||
+                     'Connected'}...
                   </span>
                 </div>
                 <button

@@ -20,14 +20,14 @@ plan:
     - id: 1
       transactions:
         - contract-publish:
-            contract-name: donation-rewards
+            contract-name: donation-rewards-v2
             expected-sender: ST3AM1A56AK2C1XAFJ4115ZSV26EB49BVQ10MGCS0
             cost: 76050
             path: contracts/donation-rewards.clar
             anchor-block-only: true
             clarity-version: 1
         - contract-publish:
-            contract-name: donation-tracker
+            contract-name: donation-tracker-v2
             expected-sender: ST3AM1A56AK2C1XAFJ4115ZSV26EB49BVQ10MGCS0
             cost: 130280
             path: contracts/donation-tracker.clar

@@ -20,13 +20,13 @@ const getNetwork = () => {
 };
 
 const network = getNetwork();
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_DEPLOYER_TESTNET_ADDRESS || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
-const DONATION_CONTRACT_NAME = process.env.NEXT_PUBLIC_DONATION_CONTRACT_NAME || 'donation-tracker';
-const REWARDS_CONTRACT_NAME = process.env.NEXT_PUBLIC_REWARDS_CONTRACT_NAME || 'donation-rewards';
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || 'ST3AM1A56AK2C1XAFJ4115ZSV26EB49BVQ10MGCS0';
+const DONATION_CONTRACT_NAME = process.env.NEXT_PUBLIC_DONATION_CONTRACT_NAME || 'donation-tracker-v2';
+const REWARDS_CONTRACT_NAME = process.env.NEXT_PUBLIC_REWARDS_CONTRACT_NAME || 'donation-rewards-v2';
 const HIRO_API_KEY = process.env.NEXT_PUBLIC_PLATFORM_HIRO_API_KEY;
 
-// Flag to use mock data when contracts aren't deployed - set to false to use real API
-const USE_MOCK_DATA = false;
+// Flag to use mock data when contracts aren't deployed
+const USE_MOCK_DATA = true; // Set to false when contracts are deployed and working
 
 export interface Campaign {
   id: number;
