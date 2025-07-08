@@ -12,6 +12,9 @@
 (define-constant err-already-initialized (err u106))
 (define-constant err-already-withdrawn (err u107))
 (define-constant err-invalid-amount (err u108))
+(define-constant err-not-found (err u109))
+(define-constant err-campaign-not-active (err u110))
+(define-constant err-owner-only (err u111))
 
 (define-constant default-duration u4320) ;; ~30 days in Bitcoin blocks
 
@@ -113,28 +116,6 @@
     })
     (ok true)))
 
-;; Withdraw funds (contract owner only)
-(define-public (withdraw-funds)
-  (let ((total-raised (var-get total-stx)))
-    (asserts! (is-eq tx-sender contract-owner) err-not-authorized)
-    (asserts! (var-get is-campaign-initialized) err-not-initialized)
-    (asserts! (not (var-get is-campaign-cancelled)) err-campaign-cancelled)
-    (asserts! (not (var-get is-campaign-withdrawn)) err-already-withdrawn)
-    (asserts! (>= burn-block-height (+ (var-get campaign-start) (var-get campaign-duration))) err-campaign-not-ended)
-    
-    ;; Transfer all funds to beneficiary
-    (as-contract
-      (try! (stx-transfer? total-raised tx-sender (var-get beneficiary))))
-    
-    (var-set is-campaign-withdrawn true)
-    
-    (print {
-      topic: "funds-withdrawn",
-      amount: total-raised,
-      beneficiary: (var-get beneficiary)
-    })
-    (ok true)))
-
 ;; Read-only functions
 (define-read-only (get-stx-donation (donor principal))
   (ok (default-to u0 (map-get? stx-donations donor))))
@@ -159,8 +140,7 @@
 (define-read-only (get-contract-balance)
   (stx-get-balance (as-contract tx-sender)))
 
-;; Data Variables
-(define-data-var total-donations uint u0)
+;; Multi-campaign system data variables
 (define-data-var total-campaigns uint u0)
 (define-data-var next-campaign-id uint u1)
 
@@ -245,7 +225,7 @@
         (campaign-id (var-get next-campaign-id))
         (end-block (+ block-height duration-blocks))
     )
-        (try! (map-set campaigns campaign-id {
+        (map-set campaigns campaign-id {
             title: title,
             description: description,
             target-amount: target-amount,
@@ -254,7 +234,7 @@
             end-block: end-block,
             is-active: true,
             created-at: block-height
-        }))
+        })
         
         ;; Initialize donation tracking for this campaign
         (map-set campaign-donations campaign-id (list))
@@ -297,19 +277,19 @@
         (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
         
         ;; Record the donation
-        (try! (map-set donations donation-id {
+        (map-set donations donation-id {
             campaign-id: campaign-id,
             donor: tx-sender,
             amount: amount,
             message: message,
             block-height: block-height,
             timestamp: block-height
-        }))
+        })
         
         ;; Update campaign amount
-        (try! (map-set campaigns campaign-id 
+        (map-set campaigns campaign-id 
             (merge campaign { current-amount: (+ (get current-amount campaign) amount) })
-        ))
+        )
         
         ;; Update donation tracking
         (map-set campaign-donations campaign-id (unwrap-panic (as-max-len? (append current-donations donation-id) u100)))
@@ -354,12 +334,12 @@
         (try! (as-contract (stx-transfer? amount tx-sender (get creator campaign))))
         
         ;; Update campaign to mark as withdrawn
-        (try! (map-set campaigns campaign-id 
+        (map-set campaigns campaign-id 
             (merge campaign { 
                 current-amount: u0,
                 is-active: false
             })
-        ))
+        )
         
         (print {
             event: "funds-withdrawn",
@@ -381,9 +361,9 @@
         (asserts! (is-eq tx-sender (get creator campaign)) err-owner-only)
         
         ;; Update campaign status
-        (try! (map-set campaigns campaign-id 
+        (map-set campaigns campaign-id 
             (merge campaign { is-active: false })
-        ))
+        )
         
         (print {
             event: "campaign-paused",

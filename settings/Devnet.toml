@@ -1,0 +1,12 @@
+[network]
+name = "devnet"
+node_rpc_address = "http://localhost:20443"
+deployment_fee_rate = 10
+
+[accounts.deployer]
+mnemonic = "twice kind fence tip hidden tilt action fragile skin nothing glory cousin green tomorrow spring wrist shed math olympic multiply hip blue scout claw"
+balance = "100000000000"
+
+[devnet]
+disable_stacks_explorer = false
+disable_stacks_api = false

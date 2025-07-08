@@ -1,0 +1,13 @@
+[network]
+name = "testnet"
+node_rpc_address = "https://stacks-node-api.testnet.stacks.co"
+deployment_fee_rate = 10
+
+[accounts.deployer]
+mnemonic = "YOUR_MNEMONIC_HERE"
+balance = "100000000000"
+
+[devnet]
+disable_stacks_explorer = false
+disable_stacks_api = false
+# Optional: Add more configuration as needed

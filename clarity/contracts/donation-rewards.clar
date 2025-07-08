@@ -62,7 +62,7 @@
 )
 
 (define-read-only (get-token-uri)
-    (ok (some "https://donation-tracker.stacks/metadata/points"))
+    (ok none)
 )
 
 (define-public (transfer (amount uint) (from principal) (to principal) (memo (optional (buff 34))))
@@ -70,8 +70,8 @@
         (asserts! (is-eq tx-sender from) (err u4))
         (asserts! (<= amount (unwrap-panic (get-balance from))) (err u1))
         
-        (try! (map-set token-balances from (- (unwrap-panic (get-balance from)) amount)))
-        (try! (map-set token-balances to (+ (unwrap-panic (get-balance to)) amount)))
+        (map-set token-balances from (- (unwrap-panic (get-balance from)) amount))
+        (map-set token-balances to (+ (unwrap-panic (get-balance to)) amount))
         
         (print {
             event: "token-transfer",
@@ -94,7 +94,7 @@
         (current-balance (unwrap-panic (get-balance donor)))
     )
         ;; Mint new points
-        (try! (map-set token-balances donor (+ current-balance points-to-award)))
+        (map-set token-balances donor (+ current-balance points-to-award))
         (var-set token-total-supply (+ (var-get token-total-supply) points-to-award))
         
         (print {
@@ -120,13 +120,13 @@
     )
         (asserts! (is-eq tx-sender contract-owner) err-owner-only)
         
-        (try! (map-set milestone-rewards reward-id {
+        (map-set milestone-rewards reward-id {
             points-required: points-required,
             reward-type: reward-type,
             description: description,
             nft-id: nft-id,
             is-active: true
-        }))
+        })
         
         (var-set next-reward-id (+ reward-id u1))
         
@@ -158,7 +158,7 @@
         (asserts! (not already-claimed) err-already-claimed)
         
         ;; Burn points
-        (try! (map-set token-balances tx-sender (- user-balance (get points-required reward))))
+        (map-set token-balances tx-sender (- user-balance (get points-required reward)))
         (var-set token-total-supply (- (var-get token-total-supply) (get points-required reward)))
         
         ;; Mark as claimed
@@ -196,8 +196,8 @@
         ;; This is a simplified version - in a real implementation, 
         ;; you'd iterate through all rewards
         (list 
-            {reward-id: u1, points-required: u1000, can-claim: (>= user-balance u1000)},
-            {reward-id: u2, points-required: u5000, can-claim: (>= user-balance u5000)},
+            {reward-id: u1, points-required: u1000, can-claim: (>= user-balance u1000)}
+            {reward-id: u2, points-required: u5000, can-claim: (>= user-balance u5000)}
             {reward-id: u3, points-required: u10000, can-claim: (>= user-balance u10000)}
         )
     )
@@ -230,11 +230,11 @@
 ;; Get leaderboard (simplified - returns top donor categories)
 (define-read-only (get-donor-leaderboard)
     (list
-        {level: "Diamond Donor", min-points: u50000, description: "Ultimate philanthropist"},
-        {level: "Platinum Donor", min-points: u25000, description: "Major contributor"},
-        {level: "Gold Donor", min-points: u10000, description: "Generous supporter"},
-        {level: "Silver Donor", min-points: u5000, description: "Regular contributor"},
-        {level: "Bronze Donor", min-points: u1000, description: "Community supporter"},
+        {level: "Diamond Donor", min-points: u50000, description: "Ultimate philanthropist"}
+        {level: "Platinum Donor", min-points: u25000, description: "Major contributor"}
+        {level: "Gold Donor", min-points: u10000, description: "Generous supporter"}
+        {level: "Silver Donor", min-points: u5000, description: "Regular contributor"}
+        {level: "Bronze Donor", min-points: u1000, description: "Community supporter"}
         {level: "New Donor", min-points: u0, description: "Welcome to our community"}
     )
 )
