@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { AppConfig, UserSession, showConnect, openContractCall } from '@stacks/connect';
-import { StacksTestnet, StacksMainnet } from '@stacks/network';
+import { STACKS_MAINNET, STACKS_TESTNET } from '@stacks/network';
 import { 
   standardPrincipalCV, 
   uintCV, 
@@ -48,7 +48,11 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const network = process.env.NEXT_PUBLIC_NETWORK === 'mainnet' ? new StacksMainnet() : new StacksTestnet();
+  // Use StacksNetwork with appropriate configuration
+  const network =
+    process.env.NEXT_PUBLIC_NETWORK === 'mainnet'
+      ? STACKS_MAINNET
+      : STACKS_TESTNET;
   const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || 'ST3AM1A56AK2C1XAFJ4115ZSV26EB49BVQ10MGCS0';
   const donationContractName = process.env.NEXT_PUBLIC_DONATION_CONTRACT_NAME || 'donation-tracker-v2';
 
