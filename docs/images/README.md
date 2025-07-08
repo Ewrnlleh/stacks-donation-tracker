@@ -4,15 +4,16 @@ This directory contains screenshots of the Stacks DeFi Donation Tracker applicat
 
 ## 📁 Image Files
 
-Please add the following screenshot files to this directory:
+The following screenshot files are available in this directory:
 
-1. **main-dashboard.png** - Main page showing campaign listings and statistics
-2. **campaign-details.png** - Individual campaign detail page
-3. **donation-modal.png** - Donation form modal
-4. **donation-success.png** - Successful donation confirmation
-5. **create-campaign.png** - Campaign creation form
-6. **user-dashboard.png** - User's personal dashboard
-7. **wallet-connection.png** - Wallet connection interface
+1. **homepage-campaigns-overview.png** - Main dashboard with campaign listings, statistics and filters
+2. **campaign-detail-page.png** - Individual campaign page with progress and donation interface
+3. **donation-form-modal.png** - STX donation form with amount input and message field
+4. **donation-success-confirmation.png** - Success screen after completed donation transaction
+5. **create-campaign-form.png** - Campaign creation interface with preview and validation
+6. **user-dashboard-stats.png** - Personal dashboard showing created campaigns and donation history
+7. **wallet-connection-modal.png** - Multi-wallet connection interface (Hiro, Xverse, etc.)
+8. **user-donations-history.png** - User's donation history page with transaction details
 
 ## 📐 Image Guidelines
 

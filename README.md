@@ -11,29 +11,32 @@ A decentralized application (dApp) for transparent charity donations built on th
 ## 📸 Application Screenshots
 
 ### 🏠 Home Page & Campaign Listing
-![Main Dashboard](docs/images/main-dashboard.png)
+![Homepage Campaigns Overview](docs/images/homepage-campaigns-overview.png)
 *Main dashboard showcasing active campaigns with real-time progress tracking, donation statistics, and campaign filtering options*
 
 ### 📋 Campaign Details & Donation Flow
-![Campaign Details](docs/images/campaign-details.png)
+![Campaign Detail Page](docs/images/campaign-detail-page.png)
 *Detailed campaign view displaying progress metrics, campaign information, and donation interface*
 
-![Donation Modal](docs/images/donation-modal.png)
+![Donation Form Modal](docs/images/donation-form-modal.png)
 *User-friendly donation form with STX amount input, optional message field, and blockchain transparency information*
 
-![Donation Success](docs/images/donation-success.png)
+![Donation Success Confirmation](docs/images/donation-success-confirmation.png)
 *Success confirmation screen with transaction details and automatic redirect to campaign page*
 
 ### ⚙️ Campaign Management
-![Create Campaign](docs/images/create-campaign.png)
+![Create Campaign Form](docs/images/create-campaign-form.png)
 *Comprehensive campaign creation interface with form validation, live preview, and success tips*
 
 ### 📊 User Dashboard
-![User Dashboard](docs/images/user-dashboard.png)
+![User Dashboard Stats](docs/images/user-dashboard-stats.png)
 *Personal dashboard for tracking created campaigns, donation history, and reward points with detailed statistics*
 
+![User Donations History](docs/images/user-donations-history.png)
+*Detailed view of user's donation history with transaction confirmations and contribution tracking*
+
 ### 💼 Wallet Integration
-![Wallet Connection](docs/images/wallet-connection.png)
+![Wallet Connection Modal](docs/images/wallet-connection-modal.png)
 *Multi-wallet support interface with seamless integration for Hiro Wallet, Xverse, and other Stacks-compatible wallets*
 
 ## 🌟 Features
