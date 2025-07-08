@@ -1,0 +1,36 @@
+---
+id: 0
+name: Testnet deployment
+network: testnet
+stacks-node: "https://stacks-node-api.testnet.stacks.co"
+bitcoin-node: "http://blockstack:blockstacksystem@bitcoind.testnet.stacks.co:18332"
+plan:
+  batches:
+    - id: 0
+      transactions:
+        - requirement-publish:
+            contract-id: SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard
+            remap-sender: ST3AM1A56AK2C1XAFJ4115ZSV26EB49BVQ10MGCS0
+            remap-principals:
+              SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE: ST3AM1A56AK2C1XAFJ4115ZSV26EB49BVQ10MGCS0
+            cost: 8400
+            path: "./.clarinet/requirements/SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard.clar"
+            clarity-version: 1
+      epoch: "2.0"
+    - id: 1
+      transactions:
+        - contract-publish:
+            contract-name: donation-rewards
+            expected-sender: ST3AM1A56AK2C1XAFJ4115ZSV26EB49BVQ10MGCS0
+            cost: 76050
+            path: contracts/donation-rewards.clar
+            anchor-block-only: true
+            clarity-version: 1
+        - contract-publish:
+            contract-name: donation-tracker
+            expected-sender: ST3AM1A56AK2C1XAFJ4115ZSV26EB49BVQ10MGCS0
+            cost: 130280
+            path: contracts/donation-tracker.clar
+            anchor-block-only: true
+            clarity-version: 1
+      epoch: "2.05"

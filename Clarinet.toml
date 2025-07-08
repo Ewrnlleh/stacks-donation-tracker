@@ -13,11 +13,11 @@ mainnet = "https://stacks-node-api.mainnet.stacks.co"
 contract_id = "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard"
 
 [contracts.donation-tracker]
-path = "contracts/donation-tracker.clar"
+path = "clarity/contracts/donation-tracker.clar"
 depends_on = []
 
 [contracts.donation-rewards]
-path = "contracts/donation-rewards.clar"
+path = "clarity/contracts/donation-rewards.clar"
 depends_on = ["donation-tracker"]
 
 [repl.analysis]
